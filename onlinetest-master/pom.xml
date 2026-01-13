@@ -14,12 +14,12 @@
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
     <modules>
-        <module>front</module>
-        <module>backage</module>
-        <module>eureka</module>
-        <module>config</module>
-        <module>auth</module>
-        <module>mail</module>
+        <module>exam-web</module>
+        <module>admin-web</module>
+        <module>registry-service</module>
+        <module>config-service</module>
+        <module>auth-service</module>
+        <module>mail-service</module>
     </modules>
 
     <properties>
