@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fanshuaiko.backage.dao.StudentDao">
+  <resultMap id="BaseResultMap" type="com.fanshuaiko.backage.entity.Student">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="student_no" property="studentNo" />
+    <result column="name" property="name" />
+    <result column="phone" property="phone" />
+    <result column="email" property="email" />
+    <result column="avatar_blob" property="avatarBlob" jdbcType="BLOB" />
+    <result column="avatar_name" property="avatarName" />
+    <result column="avatar_mime" property="avatarMime" />
+  </resultMap>
+
+  <select id="selectByStudentNo" parameterType="string" resultMap="BaseResultMap">
+    select * from student where student_no = #{studentNo}
+  </select>
+
+  <update id="updateAvatarByStudentNo" parameterType="map">
+    update student set avatar_blob = #{avatarBlob,jdbcType=BLOB}, avatar_name = #{avatarName}, avatar_mime = #{avatarMime} where student_no = #{studentNo}
+  </update>
+
+  <update id="updateProfileByStudentNo" parameterType="map">
+    update student
+    set
+      name = #{name},
+      class_no = #{classNo},
+      class_name = #{className},
+      phone = #{phone},
+      email = #{email}
+    where student_no = #{studentNo}
+  </update>
+</mapper>
