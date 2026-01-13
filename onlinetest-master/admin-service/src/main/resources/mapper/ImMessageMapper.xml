@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fanshuaiko.backage.dao.ImMessageDao">
+
+    <resultMap id="ImMessageResult" type="com.fanshuaiko.backage.entity.ImMessage">
+        <id column="id" property="id" />
+        <result column="sender_no" property="senderNo" />
+        <result column="sender_name" property="senderName" />
+        <result column="content" property="content" />
+        <result column="target" property="target" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.fanshuaiko.backage.entity.ImMessage" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO im_message (sender_no, sender_name, content, target, create_time)
+        VALUES (#{senderNo}, #{senderName}, #{content}, #{target}, #{createTime})
+    </insert>
+
+    <select id="selectLatest" resultMap="ImMessageResult">
+        SELECT id, sender_no, sender_name, content, target, create_time
+        FROM im_message
+        ORDER BY create_time DESC
+        LIMIT #{limit}
+    </select>
+</mapper>

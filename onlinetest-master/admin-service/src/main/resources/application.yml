@@ -1,0 +1,61 @@
+server:
+  # 与前端 /backage-api 开发代理保持一致，避免 8105/8085 代理转发 504
+  port: ${BACKAGE_PORT:8094}
+  servlet:
+    context-path: /backage-api
+
+#eureka注册中心
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+#本应用的名称
+spring:
+  application:
+    name: backage
+  # 允许循环依赖，解决PageHelper兼容性问题
+  main:
+    allow-circular-references: true
+
+  #mysql8
+  datasource:
+    username: root
+    password: 654321
+    # 为 MySQL 8+ 驱动启用公钥检索以支持某些身份验证方案（仅用于本地/开发环境）
+    # 在生产环境请使用更安全的连接配置并关闭 allowPublicKeyRetrieval
+    url: jdbc:mysql://localhost:3306/gp?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  #redis
+  redis:
+    host: localhost
+    port: 6379
+    password: 654321
+
+#mybatis
+mybatis:
+  mapper-locations: classpath*:mapper/AuthMapper.xml,classpath*:mapper/TeacherMapper.xml,classpath*:mapper/StudentMapper.xml,classpath*:mapper/ImMessageMapper.xml,classpath*:com/fanshuaiko/backage/dao/mapper/*.xml
+  type-aliases-package: com.fanshuaiko.backage.entity
+
+#mybatis分页插件
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+#打印sql
+logging:
+  level:
+    com.fanshuaiko.backage.dao: debug
+
+# 健康检查配置：禁用数据库和 Redis 健康检查，避免 DataSourceHealthIndicator 影响启动
+management:
+  health:
+    defaults:
+      enabled: true
+    db:
+      enabled: false
+    redis:
+      enabled: false

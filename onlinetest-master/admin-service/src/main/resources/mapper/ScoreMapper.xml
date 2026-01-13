@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fanshuaiko.backage.dao.ScoreDao">
+    <resultMap id="BaseResultMap" type="com.fanshuaiko.backage.entity.Score">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="student_no" property="studentNo" jdbcType="VARCHAR"/>
+        <result column="test_no" property="testNo" jdbcType="BIGINT"/>
+        <result column="choice" property="choice" jdbcType="INTEGER"/>
+        <result column="subjective" property="subjective" jdbcType="INTEGER"/>
+        <result column="total" property="total" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, student_no, test_no, choice, subjective, total, create_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from score
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from score
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.fanshuaiko.backage.entity.Score">
+        insert into score (id, test_no, student_no,
+                           choice, subjective, total, create_time)
+        values (#{id,jdbcType=BIGINT}, #{testNo,jdbcType=BIGINT}, #{studentNo,jdbcType=VARCHAR},
+                #{choice,jdbcType=INTEGER}, #{subjective,jdbcType=INTEGER}, #{total,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.fanshuaiko.backage.entity.Score">
+        insert into score
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="studentNo != null">student_no,</if>
+            <if test="testNo != null">test_no,</if>
+            <if test="choice != null">choice,</if>
+            <if test="subjective != null">subjective,</if>
+            <if test="total != null">total,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=BIGINT},</if>
+            <if test="studentNo != null">#{studentNo,jdbcType=VARCHAR},</if>
+            <if test="testNo != null">#{testNo,jdbcType=BIGINT},</if>
+            <if test="choice != null">#{choice,jdbcType=INTEGER},</if>
+            <if test="subjective != null">#{subjective,jdbcType=INTEGER},</if>
+            <if test="total != null">#{total,jdbcType=INTEGER},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.fanshuaiko.backage.entity.Score">
+        update score
+        <set>
+            <if test="studentNo != null">student_no = #{studentNo,jdbcType=VARCHAR},</if>
+            <if test="testNo != null">test_no = #{testNo,jdbcType=BIGINT},</if>
+            <if test="choice != null">choice = #{choice,jdbcType=INTEGER},</if>
+            <if test="subjective != null">subjective = #{subjective,jdbcType=INTEGER},</if>
+            <if test="total != null">total = #{total,jdbcType=INTEGER},</if>
+            <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.fanshuaiko.backage.entity.Score">
+        update score
+        set student_no = #{studentNo,jdbcType=VARCHAR},
+            test_no = #{testNo,jdbcType=BIGINT},
+            choice = #{choice,jdbcType=INTEGER},
+            subjective = #{subjective,jdbcType=INTEGER},
+            total = #{total,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="batchAdd">
+        insert into score (student_no, test_no, choice, subjective, total)
+        values
+        <foreach collection="scoreList" item="item" separator=",">
+            (#{item.studentNo}, #{item.testNo}, #{item.choice}, #{item.subjective}, #{item.total})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByTestNo" parameterType="java.lang.Long">
+        delete from score where test_no = #{testNo}
+    </delete>
+
+    <select id="queryByConditions" parameterType="com.fanshuaiko.backage.entity.VO.ScoreQueryTerm"
+            resultType="com.fanshuaiko.backage.entity.VO.ScoreReturnVo">
+        select
+            t.name as testName,
+            s.student_no as studentNo,
+            st.name as studentName,
+            st.major_name as majorName,
+            st.class_no as classCo,
+            s.total as totalScore
+        from score s
+        left join test t on s.test_no = t.id
+        left join student st on s.student_no = st.student_no
+        where 1 = 1
+        <if test="majorName != null and majorName != ''">
+            and st.major_name like concat('%', #{majorName}, '%')
+        </if>
+        <if test="studentName != null and studentName != ''">
+            and st.name like concat('%', #{studentName}, '%')
+        </if>
+        <if test="classCo != null and classCo != '' and classCo != '0'">
+            and (st.class_no like concat('%', #{classCo}, '%') or st.class_name like concat('%', #{classCo}, '%'))
+        </if>
+        <if test="studentNo != null and studentNo != '' and studentNo != '0'">
+            and s.student_no like concat('%', #{studentNo}, '%')
+        </if>
+        order by s.id desc
+    </select>
+
+    <select id="selectMaxAndMinAndAvgScore" parameterType="java.lang.Long" resultType="com.fanshuaiko.backage.entity.VO.TestAnalyze">
+        select
+            max(s.total) as maxScore,
+            min(s.total) as minScore,
+            ifnull(avg(s.total), 0) as averageScore
+        from score s
+        where s.test_no = #{testNo}
+    </select>
+
+    <select id="countPassStudent" parameterType="java.lang.Long" resultType="int">
+        select count(1)
+        from score s
+                 left join test t on s.test_no = t.id
+        where s.test_no = #{testNo}
+          and s.total &gt;= (ifnull(t.total_score, 0) * 0.6)
+    </select>
+
+    <select id="queryScoresWithDetailsByStudentNo" parameterType="java.lang.String" resultType="java.util.Map">
+        select
+            s.id as scoreId,
+            s.test_no as testNo,
+            t.name as testName,
+            s.choice as choiceScore,
+            s.subjective as subjectiveScore,
+            s.total as totalScore,
+            s.create_time as createTime
+        from score s
+                 left join test t on s.test_no = t.id
+        where s.student_no = #{studentNo}
+        order by s.id desc
+    </select>
+</mapper>

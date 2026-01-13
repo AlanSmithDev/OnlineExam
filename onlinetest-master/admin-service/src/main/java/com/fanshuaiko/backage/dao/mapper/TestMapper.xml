@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fanshuaiko.backage.dao.TestDao">
+    <resultMap id="BaseResultMap" type="com.fanshuaiko.backage.entity.Test">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="course_id" jdbcType="INTEGER" property="courseId"/>
+        <result column="teacher_no" jdbcType="VARCHAR" property="teacherNo"/>
+        <result column="total_score" jdbcType="INTEGER" property="totalScore"/>
+        <result column="status" jdbcType="CHAR" property="status"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="test_time" jdbcType="INTEGER" property="testTime"/>
+        <result column="exam_notice" jdbcType="LONGVARCHAR" property="examNotice"/>
+        <result column="exam_intro" jdbcType="LONGVARCHAR" property="examIntro"/>
+        <result column="camera_required" jdbcType="TINYINT" property="cameraRequired"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, name, course_id, teacher_no, total_score, status, start_time, end_time, test_time, exam_notice, exam_intro, camera_required
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from test
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from test
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.fanshuaiko.backage.entity.Test">
+    insert into test (id, name, course_id, 
+      teacher_no, total_score, status, 
+      start_time, end_time, test_time, exam_notice, exam_intro, camera_required)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{courseId,jdbcType=INTEGER},
+      #{teacherNo,jdbcType=VARCHAR}, #{totalScore,jdbcType=INTEGER}, #{status,jdbcType=CHAR},
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{testTime,jdbcType=INTEGER}, #{examNotice,jdbcType=LONGVARCHAR}, #{examIntro,jdbcType=LONGVARCHAR}, #{cameraRequired,jdbcType=TINYINT})
+  </insert>
+    <insert id="insertSelective" parameterType="com.fanshuaiko.backage.entity.Test">
+
+        insert into test
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="courseId != null">
+                course_id,
+            </if>
+            <if test="teacherNo != null">
+                teacher_no,
+            </if>
+            <if test="totalScore != null">
+                total_score,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="testTime != null">
+                test_time,
+            </if>
+            <if test="examNotice != null">
+                exam_notice,
+            </if>
+            <if test="examIntro != null">
+                exam_intro,
+            </if>
+            <if test="cameraRequired != null">
+                camera_required,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="courseId != null">
+                #{courseId,jdbcType=INTEGER},
+            </if>
+            <if test="teacherNo != null">
+                #{teacherNo,jdbcType=VARCHAR},
+            </if>
+            <if test="totalScore != null">
+                #{totalScore,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=CHAR},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="testTime != null">
+                #{testTime,jdbcType=INTEGER},
+            </if>
+            <if test="examNotice != null">
+                #{examNotice,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="examIntro != null">
+                #{examIntro,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="cameraRequired != null">
+                #{cameraRequired,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.fanshuaiko.backage.entity.Test">
+        update test
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="courseId != null">
+                course_id = #{courseId,jdbcType=INTEGER},
+            </if>
+            <if test="teacherNo != null">
+                teacher_no = #{teacherNo,jdbcType=VARCHAR},
+            </if>
+            <if test="totalScore != null">
+                total_score = #{totalScore,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=CHAR},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="testTime != null">
+                test_time = #{testTime,jdbcType=INTEGER},
+            </if>
+            <if test="examNotice != null">
+                exam_notice = #{examNotice,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="examIntro != null">
+                exam_intro = #{examIntro,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="cameraRequired != null">
+                camera_required = #{cameraRequired,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.fanshuaiko.backage.entity.Test">
+    update test
+    set name = #{name,jdbcType=VARCHAR},
+      course_id = #{courseId,jdbcType=INTEGER},
+      teacher_no = #{teacherNo,jdbcType=VARCHAR},
+      total_score = #{totalScore,jdbcType=INTEGER},
+      status = #{status,jdbcType=CHAR},
+      start_time = #{startTime},
+      end_time = #{EndTime},
+      test_time = #{testTime,jdbcType=INTEGER},
+      exam_notice = #{examNotice,jdbcType=LONGVARCHAR},
+      exam_intro = #{examIntro,jdbcType=LONGVARCHAR},
+      camera_required = #{cameraRequired,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <insert id="insertTest" parameterType="com.fanshuaiko.backage.entity.VO.TestVO">
+    insert into test (id, name, course_id,
+      teacher_no, total_score, status,
+      start_time, end_time,test_time, exam_notice, exam_intro, camera_required)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{courseId,jdbcType=INTEGER},
+      #{teacherNo,jdbcType=VARCHAR}, #{totalScore,jdbcType=INTEGER}, #{status,jdbcType=CHAR},
+       #{startTime},
+      #{endTime},#{testTime},#{examNotice},#{examIntro},#{cameraRequired})
+  </insert>
+
+    <insert id="insertTestClass" parameterType="com.fanshuaiko.backage.entity.VO.TestVO">
+        insert into test_class(test_no,class_no)
+        values
+        <foreach collection="classNoList" item="item" index="index" separator=",">
+            (#{id},#{item})
+        </foreach>
+    </insert>
+
+    <insert id="insertTestQuestion">
+        insert into test_question(test_no,question_no,score,question_type)
+        values
+        <foreach collection="questionNoList" item="item" index="index" separator=",">
+            (#{testNo},#{item},#{score},#{questionType})
+        </foreach>
+    </insert>
+
+    <select id="queryTests" resultType="com.fanshuaiko.backage.entity.VO.TestReturnVo">
+        select
+ 	 t.id as id ,
+	 t.name as name,
+	 t.teacher_no as teacherNo,
+	 t.course_id as courseId,
+	 c.name as courseName,
+	 ifnull(te.name, t.teacher_no) as teacherName,
+	 t.total_score as totalScore,
+	 t.status as status,
+	 t.start_time as startTime,
+	 t.end_time as endTime,
+	 t.test_time as testTime,
+	 t.exam_notice as examNotice,
+         t.exam_intro as examIntro,
+         t.camera_required as cameraRequired
+
+from
+	test t
+left join course c on
+	t.course_id = c.id
+left join teacher te on
+	t.teacher_no = te.teacher_no
+        <where>
+            <if test="teacherNo != null and teacherNo != ''">
+                t.teacher_no = #{teacherNo}
+            </if>
+            <if test="name != null and name != ''">
+                and t.name like concat('%', #{name}, '%')
+            </if>
+        </where>
+        order by t.start_time desc, t.id desc
+    </select>
+
+    <select id="queryTestQuestion" parameterType="java.lang.Long"
+            resultType="com.fanshuaiko.backage.entity.TestQuestion">
+    select id,
+    test_no as testNo,
+    question_no as questionNo,
+    score,
+    question_type as questionType
+    from test_question
+    where test_no = #{testNo}
+</select>
+
+    <select id="queryQuestionNos" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select question_no from test_question where test_no = #{testNo}
+    </select>
+
+    <delete id="batchDeleteByIds" parameterType="java.util.List">
+        delete from test
+        where id in
+        <foreach collection="ids" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTestClassByTestNo" parameterType="java.lang.Long">
+        delete from test_class where test_no = #{testNo}
+    </delete>
+
+    <select id="selectByQuestionNo" parameterType="java.lang.Long"
+            resultType="com.fanshuaiko.backage.entity.TestQuestion">
+        select id,test_no,question_no,score,question_type
+        from test_question
+        where question_no = #{testNo}
+    </select>
+
+    <select id="sumStudentCount" parameterType="java.lang.Long"
+            resultType="com.fanshuaiko.backage.entity.VO.TestAnalyze">
+        select
+        count(*) as studentCount,
+        t.total_score as totalScore
+        from test t
+        left join test_class tc on tc.test_no =t.id
+        left join student s on s.class_no = tc.class_no
+        where t.id = #{testNo}
+    </select>
+
+    <select id="queryParamsForMail" parameterType="java.lang.Long"
+            resultType="com.fanshuaiko.backage.entity.mail.ScoreParams">
+        select
+	s.student_no as studentNo,
+	s.name as name,
+	s.email as toMailAddress,
+	t.name as testName,
+	sc.total as totalScore
+from
+	test t
+left join test_class tc on
+	tc.test_no = t.id
+left join student s on
+	s.class_no = tc.class_no
+left join score sc on
+	sc.student_no = s.student_no
+where
+	t.id = #{testNo}
+    </select>
+
+    <select id="queryClassNosByTestNo" parameterType="java.lang.Long" resultType="java.lang.String">
+        select class_no from test_class where test_no = #{testNo}
+    </select>
+</mapper>

@@ -1,0 +1,26 @@
+{
+  "name": "front",
+  "version": "1.0.0",
+  "description": "A Vue.js project",
+  "author": "fanshuaiko <1197303677@qq.com>",
+  "private": true,
+  "scripts": {
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "start": "npm run dev",
+    "build": "node build/build.js"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "echarts": "^5.4.0",
+    "element-ui": "^2.15.14",
+    "qs": "^6.15.0",
+    "vue": "^2.5.2",
+    "vue-router": "^3.0.1"
+  },
+  "devDependencies": {
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.9.1",
+    "vue-loader": "^13.3.0",
+    "vue-template-compiler": "^2.5.2"
+  }
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fanshuaiko.backage.dao.NoticeDao">
+    <resultMap id="NoticeResult" type="com.fanshuaiko.backage.entity.Notice">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="target_role" property="targetRole" />
+        <result column="publisher_no" property="publisherNo" />
+        <result column="publisher_name" property="publisherName" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.fanshuaiko.backage.entity.Notice" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notice (title, content, target_role, publisher_no, publisher_name)
+        VALUES (#{title}, #{content}, #{targetRole}, #{publisherNo}, #{publisherName})
+    </insert>
+
+    <update id="update" parameterType="com.fanshuaiko.backage.entity.Notice">
+        UPDATE notice
+        SET title = #{title},
+            content = #{content},
+            target_role = #{targetRole}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM notice WHERE id = #{id}
+    </delete>
+
+    <select id="getById" resultMap="NoticeResult">
+        SELECT id, title, content, target_role, publisher_no, publisher_name, NOW() as create_time
+        FROM notice
+        WHERE id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="listByTarget" resultMap="NoticeResult">
+        SELECT id, title, content, target_role, publisher_no, publisher_name, NOW() as create_time
+        FROM notice
+        <where>
+            <if test="targetRole != null">
+                AND (target_role = #{targetRole} OR target_role = 0)
+            </if>
+        </where>
+        ORDER BY id DESC
+        <if test="limit != null and limit &gt; 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="listRules" resultMap="NoticeResult">
+        SELECT id, title, content, target_role, publisher_no, publisher_name, NOW() as create_time
+        FROM notice
+        WHERE target_role = 9
+        ORDER BY id DESC
+        <if test="limit != null and limit &gt; 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+</mapper>
