@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fanshuaiko.backage.dao.ScoreDetailDao">
+    <resultMap id="BaseResultMap" type="com.fanshuaiko.backage.entity.ScoreDetail">
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="student_no" jdbcType="VARCHAR" property="studentNo"/>
+        <result column="test_no" jdbcType="BIGINT" property="testNo"/>
+        <result column="question_no" jdbcType="BIGINT" property="questionNo"/>
+        <result column="student_score" jdbcType="INTEGER" property="studentScore"/>
+        <result column="question_score" jdbcType="INTEGER" property="questionScore"/>
+        <result column="question_type" jdbcType="CHAR" property="questionType"/>
+        <result column="flag" jdbcType="CHAR" property="flag"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="grader_no" jdbcType="VARCHAR" property="graderNo"/>
+        <result column="locked_at" jdbcType="TIMESTAMP" property="lockedAt"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.fanshuaiko.backage.entity.ScoreDetail">
+        <result column="student_answer" jdbcType="LONGVARCHAR" property="studentAnswer"/>
+    </resultMap>
+    <sql id="Blob_Column_List">
+    student_answer
+  </sql>
+    <insert id="insert" parameterType="com.fanshuaiko.backage.entity.ScoreDetail">
+    insert into score_detail (id, student_no, test_no, 
+      question_no, student_score, question_type, 
+      flag, create_time, student_answer
+      )
+    values (#{id,jdbcType=BIGINT}, #{studentNo,jdbcType=VARCHAR}, #{testNo,jdbcType=BIGINT}, 
+      #{questionNo,jdbcType=BIGINT}, #{studentScore,jdbcType=INTEGER}, #{questionType,jdbcType=CHAR},
+      #{flag,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{studentAnswer,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.fanshuaiko.backage.entity.ScoreDetail">
+        insert into score_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="studentNo != null">
+                student_no,
+            </if>
+            <if test="testNo != null">
+                test_no,
+            </if>
+            <if test="questionNo != null">
+                question_no,
+            </if>
+            <if test="studentScore != null">
+                student_score,
+            </if>
+            <if test="questionType != null">
+                question_type,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="studentAnswer != null">
+                student_answer,
+            </if>
+            <if test="graderNo != null">
+                grader_no,
+            </if>
+            <if test="lockedAt != null">
+                locked_at,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="studentNo != null">
+                #{studentNo,jdbcType=VARCHAR},
+            </if>
+            <if test="testNo != null">
+                #{testNo,jdbcType=BIGINT},
+            </if>
+            <if test="questionNo != null">
+                #{questionNo,jdbcType=BIGINT},
+            </if>
+            <if test="studentScore != null">
+                #{studentScore,jdbcType=INTEGER},
+            </if>
+            <if test="questionType != null">
+                #{questionType,jdbcType=CHAR},
+            </if>
+            <if test="flag != null">
+                #{flag,jdbcType=CHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="studentAnswer != null">
+                #{studentAnswer,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="graderNo != null">
+                #{graderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="lockedAt != null">
+                #{lockedAt,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="queryScoreDetail" parameterType="java.lang.Long"
+            resultType="com.fanshuaiko.backage.entity.VO.ScoreDetailReturnVo">
+        select
+        sd.id as id,
+        t.name as testName,
+        s.question as questionName,
+        sd.student_answer as studentAnswer,
+        s.answer as answer,
+        sd.question_score as questionScore,
+        sd.question_type as questionType,
+        sd.flag as flag,
+        sd.grader_no as graderNo,
+        sd.locked_at as lockedAt
+        from score_detail sd
+        left join test t on t.id = sd.test_no
+        left join subjective s on s.id = sd.question_no
+        where sd.test_no = #{testNo} and sd.question_type = '4' and sd.flag = '0'
+        order by sd.id asc
+        limit 1
+    </select>
+
+    <update id="updateStudentScoreById">
+        update
+        score_detail
+        set student_score = #{score},
+                flag = '1',
+                grader_no = null,
+                locked_at = null
+        where id = #{id}
+    </update>
+
+    <select id="queryAllChoiceByTestNo" resultMap="BaseResultMap">
+        select
+        id,
+        student_no,
+        test_no,
+        question_no,
+        student_score,
+        question_score,
+        question_type,
+        flag,
+        create_time,
+        grader_no,
+        locked_at,
+        student_answer
+        from score_detail
+        where test_no = #{testNo} and question_type != '4' and flag = '0'
+    </select>
+
+    <update id="batchUpdateStudentScore" parameterType="java.util.List">
+        update score_detail
+        set
+        flag = '1',
+        student_score =
+        <foreach collection="scoreDetails" item="item" index="index" separator=" " open="case ID" close="end">
+            when #{item.id} then #{item.studentScore}
+        </foreach>
+        where id in
+        <foreach collection="scoreDetails" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <select id="sumTotalScore" resultType="com.fanshuaiko.backage.entity.Score">
+         select
+        student_no as studentNo,
+        test_no as testNo,
+        SUM(student_score) as total
+        from score_detail
+        where test_no = #{testNo}
+        group by student_no
+    </select>
+
+    <!-- New SQL for claim/release -->
+    <!-- Atomically claim one subjective row by updating flag from '0' to '2' for the smallest id -->
+    <update id="claimNextSubjective" parameterType="map">
+        update score_detail set flag = '2', grader_no = #{graderNo}, locked_at = NOW() where id = (
+            select id from (
+                select id from score_detail where test_no = #{testNo} and question_type = '4' and flag = '0' order by id asc limit 1
+            ) tmp
+        )
+    </update>
+
+    <!-- Query the currently claimed subjective row (flag='2') for this test -->
+    <select id="queryClaimedForTest" parameterType="java.lang.Long" resultType="com.fanshuaiko.backage.entity.VO.ScoreDetailReturnVo">
+        select
+        sd.id as id,
+        t.name as testName,
+        s.question as questionName,
+        sd.student_answer as studentAnswer,
+        s.answer as answer,
+        sd.question_score as questionScore,
+        sd.question_type as questionType,
+        sd.flag as flag,
+        sd.grader_no as graderNo,
+        sd.locked_at as lockedAt
+        from score_detail sd
+        left join test t on t.id = sd.test_no
+        left join subjective s on s.id = sd.question_no
+        where sd.test_no = #{testNo} and sd.question_type = '4' and sd.flag = '2'
+        order by sd.id asc
+        limit 1
+    </select>
+
+    <!-- Release a claim by id (set flag back to '0') -->
+    <update id="releaseClaimById">
+        update score_detail set flag = '0', grader_no = null, locked_at = null where id = #{id} and flag = '2'
+    </update>
+
+    <select id="findMarkDetailByTestNo" parameterType="java.lang.Long" resultType="java.util.Map">
+        select
+            sd.id as id,
+            sd.student_no as studentNo,
+            st.name as studentName,
+            sd.test_no as testNo,
+            t.name as testName,
+            sd.question_no as questionNo,
+            sj.question as questionContent,
+            sj.answer as referenceAnswer,
+            sd.student_answer as studentAnswer,
+            sd.question_score as questionScore,
+            sd.student_score as studentScore,
+            sd.flag as flag,
+            sd.grader_no as graderNo,
+            sd.locked_at as lockedAt
+        from score_detail sd
+                 left join test t on t.id = sd.test_no
+                 left join subjective sj on sj.id = sd.question_no and sd.question_type = '4'
+                 left join student st on st.student_no = sd.student_no
+        where sd.test_no = #{testNo}
+          and sd.question_type = '4'
+        order by sd.id asc
+    </select>
+
+    <select id="listReferenceAnswersByTestNo" parameterType="java.lang.Long" resultType="java.util.Map">
+        select
+            tq.test_no as testNo,
+            tq.question_no as questionNo,
+            tq.question_type as questionType,
+            case
+                when tq.question_type in ('1','2','3') then c.question
+                when tq.question_type = '4' then s.question
+                else '未知题型'
+                end as questionContent,
+            case
+                when tq.question_type in ('1','2','3') then c.answer
+                when tq.question_type = '4' then s.answer
+                else null
+                end as referenceAnswer
+        from test_question tq
+                 left join choice c on tq.question_no = c.id and tq.question_type in ('1','2','3')
+                 left join subjective s on tq.question_no = s.id and tq.question_type = '4'
+        where tq.test_no = #{testNo}
+        order by tq.id asc
+    </select>
+
+    <select id="findWrongQuestionsByStudentNo" parameterType="java.lang.String" resultType="java.util.Map">
+        select
+            sd.student_answer as studentAnswer,
+            t.name as testName,
+            case
+                when sd.question_type in ('1','2','3') then c.question
+                when sd.question_type = '4' then s.question
+                else '未知题型'
+                end as questionContent,
+            case
+                when sd.question_type in ('1','2','3') then c.answer
+                when sd.question_type = '4' then s.answer
+                else 'N/A'
+                end as correctAnswer,
+            '' as analysis
+        from score_detail sd
+                 left join test t on sd.test_no = t.id
+                 left join choice c on sd.question_no = c.id and sd.question_type in ('1','2','3')
+                 left join subjective s on sd.question_no = s.id and sd.question_type = '4'
+        where sd.student_no = #{studentNo}
+          and (sd.student_score is null or sd.student_score = 0)
+        order by sd.id desc
+    </select>
+
+</mapper>

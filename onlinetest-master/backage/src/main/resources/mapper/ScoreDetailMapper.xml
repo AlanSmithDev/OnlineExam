@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fanshuaiko.backage.dao.ScoreDetailDao">
+
+    <!-- Base column list (non-BLOB columns) -->
+    <sql id="Base_Column_List">
+        id, student_no, test_no, question_no, student_score, question_score, question_type, flag, create_time, grader_no, locked_at
+    </sql>
+
+    <!-- BLOB column list -->
+    <sql id="Blob_Column_List">
+        student_answer
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.fanshuaiko.backage.entity.ScoreDetail">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="student_no" jdbcType="VARCHAR" property="studentNo"/>
+        <result column="test_no" jdbcType="BIGINT" property="testNo"/>
+        <result column="question_no" jdbcType="BIGINT" property="questionNo"/>
+        <result column="student_score" jdbcType="INTEGER" property="studentScore"/>
+        <result column="question_score" jdbcType="INTEGER" property="questionScore"/>
+        <result column="question_type" jdbcType="CHAR" property="questionType"/>
+        <result column="flag" jdbcType="CHAR" property="flag"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="grader_no" jdbcType="VARCHAR" property="graderNo"/>
+        <result column="locked_at" jdbcType="TIMESTAMP" property="lockedAt"/>
+    </resultMap>
+
+    <resultMap id="ResultMapWithBLOBs" type="com.fanshuaiko.backage.entity.ScoreDetail" extends="BaseResultMap">
+        <result column="student_answer" jdbcType="LONGVARCHAR" property="studentAnswer"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.fanshuaiko.backage.entity.ScoreDetail">
+        insert into score_detail (
+          <include refid="Base_Column_List"/>,
+          <include refid="Blob_Column_List"/>
+        )
+        values (
+          #{id,jdbcType=BIGINT}, #{studentNo,jdbcType=VARCHAR}, #{testNo,jdbcType=BIGINT},
+          #{questionNo,jdbcType=BIGINT}, #{studentScore,jdbcType=INTEGER}, #{questionScore,jdbcType=INTEGER},
+          #{questionType,jdbcType=CHAR}, #{flag,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{graderNo,jdbcType=VARCHAR}, #{lockedAt,jdbcType=TIMESTAMP},
+          #{studentAnswer,jdbcType=LONGVARCHAR}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.fanshuaiko.backage.entity.ScoreDetail">
+        update score_detail
+        set student_no = #{studentNo,jdbcType=VARCHAR},
+            test_no = #{testNo,jdbcType=BIGINT},
+            question_no = #{questionNo,jdbcType=BIGINT},
+            student_score = #{studentScore,jdbcType=INTEGER},
+            question_score = #{questionScore,jdbcType=INTEGER},
+            question_type = #{questionType,jdbcType=CHAR},
+            flag = #{flag,jdbcType=CHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            grader_no = #{graderNo,jdbcType=VARCHAR},
+            locked_at = #{lockedAt,jdbcType=TIMESTAMP},
+            student_answer = #{studentAnswer,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>,
+        <include refid="Blob_Column_List"/>
+        from score_detail
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <!-- Find wrong questions for a student (student_score = 0) -->
+    <select id="findWrongQuestionsByStudentNo" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT
+            sd.student_answer AS studentAnswer,
+            t.name AS testName,
+            CASE
+                WHEN sd.question_type IN ('1','2','3') THEN c.question
+                WHEN sd.question_type = '4' THEN s.question
+                ELSE '未知题型'
+            END AS questionContent,
+            CASE
+                WHEN sd.question_type IN ('1','2','3') THEN c.answer
+                WHEN sd.question_type = '4' THEN s.answer
+                ELSE 'N/A'
+            END AS correctAnswer,
+            '' AS analysis
+        FROM score_detail sd
+        LEFT JOIN test t ON sd.test_no = t.id
+        LEFT JOIN choice c ON sd.question_no = c.id AND sd.question_type IN ('1','2','3')
+        LEFT JOIN subjective s ON sd.question_no = s.id AND sd.question_type = '4'
+        WHERE sd.student_no = #{studentNo}
+          AND (sd.student_score IS NULL OR sd.student_score = 0)
+        ORDER BY sd.id DESC
+    </select>
+
+    <!-- List reference answers for a test (used by mark paper preview) -->
+    <select id="listReferenceAnswersByTestNo" parameterType="java.lang.Long" resultType="java.util.Map">
+        SELECT
+            tq.test_no AS testNo,
+            tq.question_no AS questionNo,
+            tq.question_type AS questionType,
+            CASE
+                WHEN tq.question_type IN ('1','2','3') THEN c.question
+                WHEN tq.question_type = '4' THEN s.question
+                ELSE '未知题型'
+            END AS questionContent,
+            CASE
+                WHEN tq.question_type IN ('1','2','3') THEN c.answer
+                WHEN tq.question_type = '4' THEN s.answer
+                ELSE NULL
+            END AS referenceAnswer
+        FROM test_question tq
+        LEFT JOIN choice c ON tq.question_no = c.id AND tq.question_type IN ('1','2','3')
+        LEFT JOIN subjective s ON tq.question_no = s.id AND tq.question_type = '4'
+        WHERE tq.test_no = #{testNo}
+        ORDER BY tq.id
+    </select>
+
+</mapper>

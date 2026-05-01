@@ -1,0 +1,71 @@
+package com.fanshuaiko.backage.entity;
+
+/**
+ * @ClassName PaperStatus
+ * @Description 题目批改状态
+ * @Author fanshuaiko
+ * @Date 19-4-16 上午10:40
+ * @Version 1.0
+ **/
+public class PaperStatus {
+    private Long id;
+
+    private Long testNo;
+
+    private String testName;
+
+    private String choiceStatus;
+
+    private String subjectiveStatus;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getTestNo() {
+        return testNo;
+    }
+
+    public void setTestNo(Long testNo) {
+        this.testNo = testNo;
+    }
+
+    public String getChoiceStatus() {
+        return choiceStatus;
+    }
+
+    public void setChoiceStatus(String choiceStatus) {
+        this.choiceStatus = choiceStatus == null ? null : choiceStatus.trim();
+    }
+
+    public String getSubjectiveStatus() {
+        return subjectiveStatus;
+    }
+
+    public void setSubjectiveStatus(String subjectiveStatus) {
+        this.subjectiveStatus = subjectiveStatus == null ? null : subjectiveStatus.trim();
+    }
+
+    public String getTestName() {
+        return testName;
+    }
+
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
+
+    @Override
+    public String toString() {
+        return "PaperStatus{" +
+                "id=" + id +
+                ", testNo=" + testNo +
+                ", testName='" + testName + '\'' +
+                ", choiceStatus='" + choiceStatus + '\'' +
+                ", subjectiveStatus='" + subjectiveStatus + '\'' +
+                '}';
+    }
+}

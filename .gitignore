@@ -1,0 +1,11 @@
+# 只允许 onlinetest 和 onlinetest-master 文件夹上传，忽略其他所有内容
+
+# 忽略根目录下所有文件
+/*
+
+# 忽略根目录下所有文件夹（除了两个目标文件夹）
+!/onlinetest/
+!/onlinetest-master/
+
+# 保留 .gitignore 自身
+!.gitignore
