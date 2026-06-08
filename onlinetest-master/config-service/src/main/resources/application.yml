@@ -1,0 +1,38 @@
+server:
+  port: 8889
+
+#git仓库地址
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/fanshuaiko/springcloud-config
+          timeout: 10
+          clone-on-start: false
+        health:
+          enabled: false
+
+  application:
+    name: config-service
+  
+  # 禁用Redis和Datasource自动配置（如果不需要）
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+
+# 详细日志配置
+logging:
+  level:
+    org.springframework.cloud.config: DEBUG
+
+# 健康检查配置
+management:
+  health:
+    redis:
+      enabled: false
+    config:
+      enabled: false
