@@ -1,0 +1,36 @@
+#端口
+server:
+  port: 8761
+  compression:
+    enabled: false
+  #地址
+eureka:
+  instance:
+    hostname: 127.0.0.1
+  server:
+    # 开发环境关闭自我保护，避免清理失效节点过慢
+    enable-self-preservation: false
+    # 缩短剔除失效节点的时间间隔（毫秒）
+    eviction-interval-timer-in-ms: 5000
+    # 增加集群节点读取超时时间，解决 SocketTimeoutException
+    peer-node-read-timeout-ms: 5000
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+# 禁用Redis自动配置
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+
+# 修复缩进，禁用Redis健康检查
+management:
+  health:
+    redis:
+      enabled: false
